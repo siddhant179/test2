@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: test-base-app
-  namespace: argocd
+  namespace: test-10
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   labels:
