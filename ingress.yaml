@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
+  labels:
+    app: nginx
 spec:
   replicas: 2
   selector:
@@ -14,6 +16,21 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.17.4
+        image: nginx:1.19.3
         ports:
         - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    app: nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30007  # You can expose Nginx on this NodePort
+  selector:
+    app: nginx
