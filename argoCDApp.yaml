@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-base-app
+  namespace: test-10
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ index .Values "test-app-10" "syncWave" }}
+  labels:
+    app: test-app-10
+    tenantId: "123456789"
+spec:
+  destination:
+    namespace: test-10
+    server: {{ index .Values "test-app-10" "k8sServer" }}
+  project: default
+  source:
+    path: 
+    repoURL: #TENANT_REPO_URL
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+      - manifest-config.yaml
+      - app-config.yaml
+      - override-config.yaml
+    values: |
+{{ tpl (.Files.Get "#APP_OVERRIDE_VALUES_FILE") . | indent 8 }}
+  syncPolicy:
+    automated:
+      prune: {{ index .Values "#TENANT_APP_NAME" "syncEnable" }}
+      selfHeal: {{ index .Values "#TENANT_APP_NAME" "syncEnable" }}
+      allowEmpty: true
+    syncOptions:
+    - CreateNamespace=true
