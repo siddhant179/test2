@@ -2,34 +2,23 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: test-base-app
-  namespace: test-10
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
-  annotations:
-    argocd.argoproj.io/sync-wave: {{ index .Values "test-app-10" "syncWave" }}
   labels:
-    app: test-app-10
-    tenantId: "123456789"
+    app: test-base-app
 spec:
   destination:
-    namespace: test-10
-    server: {{ index .Values "test-app-10" "k8sServer" }}
+    namespace: argocd
+    server: https://kubernetes.default.svc  # Kubernetes API server
   project: default
   source:
-    path: 
-    repoURL: #TENANT_REPO_URL
+    repoURL: https://github.com/siddhant179/test2.git  # Repository containing child applications
     targetRevision: HEAD
-    helm:
-      valueFiles:
-      - manifest-config.yaml
-      - app-config.yaml
-      - override-config.yaml
-    values: |
-{{ tpl (.Files.Get "#APP_OVERRIDE_VALUES_FILE") . | indent 8 }}
+    path: apps/  # Path to a folder containing Application manifests
   syncPolicy:
     automated:
-      prune: {{ index .Values "#TENANT_APP_NAME" "syncEnable" }}
-      selfHeal: {{ index .Values "#TENANT_APP_NAME" "syncEnable" }}
-      allowEmpty: true
+      prune: true
+      selfHeal: true
     syncOptions:
     - CreateNamespace=true
