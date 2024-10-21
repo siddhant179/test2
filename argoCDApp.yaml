@@ -9,7 +9,7 @@ metadata:
     app: test-base-app
 spec:
   destination:
-    namespace: test-10
+    namespace: test-10  # Change this to test-10
     server: https://kubernetes.default.svc  # Kubernetes API server
   project: default
   source:
